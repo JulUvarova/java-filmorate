@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class BaseController<M extends BaseModel>{
+public abstract class BaseController<M extends BaseModel> {
     protected final Map<Integer, M> storage = new HashMap<>();
     private int idCount = 0;
 
