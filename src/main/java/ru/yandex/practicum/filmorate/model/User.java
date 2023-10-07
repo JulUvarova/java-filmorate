@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class User extends BaseModel {
     private String name;
 
-    @Pattern(regexp = "\\S+",  message = "Логин не может быть пустым и содержать пробелы")
+    @Pattern(regexp = "\\S+", message = "Логин не может быть пустым и содержать пробелы")
     private String login;
 
     @NotBlank(message = "Почта не может быть пустой")

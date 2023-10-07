@@ -28,9 +28,9 @@ public class UserController extends BaseController<User> {
 
     @PutMapping
     public BaseModel update(@Valid @RequestBody User user) {
-            validateUserName(user);
-            log.info("Пользователь с id={} обновлен", user.getId());
-            return super.update(user);
+        validateUserName(user);
+        log.info("Пользователь с id={} обновлен", user.getId());
+        return super.update(user);
     }
 
     private void validateUserName(User user) {

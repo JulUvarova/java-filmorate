@@ -15,7 +15,7 @@ public class Film extends BaseModel {
     @NotBlank(message = "Название не может быть пустым")
     private String name;
 
-    @Size(max=200, message = "Описание не более 200 знаков")
+    @Size(max = 200, message = "Описание не более 200 знаков")
     private String description;
 
     @ValidateDate

@@ -27,7 +27,7 @@ public class FilmController extends BaseController<Film> {
 
     @PutMapping
     public BaseModel update(@Valid @RequestBody Film film) {
-            log.info("Фильм с id={} обновлен", film.getId());
-            return super.update(film);
-     }
+        log.info("Фильм с id={} обновлен", film.getId());
+        return super.update(film);
+    }
 }

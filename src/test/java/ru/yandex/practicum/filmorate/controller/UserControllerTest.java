@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -168,7 +169,7 @@ class UserControllerTest extends BaseControllerTest<User> {
 
     @Test
     void unknownUserUpdate() throws Exception {
-       user.setId(1000);
+        user.setId(1000);
 
         MvcResult result = mockMvc.perform(getPutRequest(user, PATH))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
