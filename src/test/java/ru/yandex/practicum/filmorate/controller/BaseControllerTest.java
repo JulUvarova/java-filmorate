@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.yandex.practicum.filmorate.exception.ProjectException;
 import ru.yandex.practicum.filmorate.model.BaseModel;
-import ru.yandex.practicum.filmorate.model.Film;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
