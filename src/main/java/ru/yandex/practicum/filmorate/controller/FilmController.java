@@ -11,7 +11,6 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-
 public class FilmController extends BaseController<Film> {
     @GetMapping
     public ArrayList<Film> readAll() {

@@ -79,7 +79,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
     }
 
     @Test
-    void failDescriptionFilmCreate() throws Exception {
+    void failLargeDescriptionFilmCreate() throws Exception {
         film.setDescription("В этом случае мы сообщаем Spring, что единственный bean-компонент, " +
                 "который следует использовать в этом тесте, — это класс BookController. " +
                 "Это может не иметь большого значения в нашем небольшом примере приложения, " +
@@ -93,8 +93,30 @@ class FilmControllerTest extends BaseControllerTest<Film> {
     }
 
     @Test
+    void failNullDesrcriptionFilmCreate() throws Exception {
+        film.setDescription(null);
+
+        MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+        ProjectException exc = getExcFromResult(result);
+        assertEquals("Описание не может быть пустым", exc.getMessage());
+    }
+
+    @Test
     void failReleaseDateFilmCreate() throws Exception {
         film.setReleaseDate(LocalDate.of(1100, 1, 1));
+
+        MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+        ProjectException exc = getExcFromResult(result);
+        assertEquals("Фильм не может быть снят ранее 28.12.1895", exc.getMessage());
+    }
+
+    @Test
+    void failNullDateFilmCreate() throws Exception {
+        film.setReleaseDate(null);
 
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())

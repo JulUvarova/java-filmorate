@@ -79,7 +79,7 @@ class UserControllerTest extends BaseControllerTest<User> {
 
     @Test
     void failNullLoginUserCreate() throws Exception {
-        user.setLogin("  ");
+        user.setLogin(null);
 
         MvcResult result = mockMvc.perform(getPostRequest(user, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
@@ -103,7 +103,7 @@ class UserControllerTest extends BaseControllerTest<User> {
     }
 
     @Test
-    void failBirthdayUserCreate() throws Exception {
+    void failBirthdayInFutureUserCreate() throws Exception {
         user.setBirthday(LocalDate.of(3000, 1, 1));
 
         MvcResult result = mockMvc.perform(getPostRequest(user, PATH))
@@ -111,6 +111,17 @@ class UserControllerTest extends BaseControllerTest<User> {
                 .andReturn();
         ProjectException exc = getExcFromResult(result);
         assertEquals("Дата рождения не может быть в будущем", exc.getMessage());
+    }
+
+    @Test
+    void failNullBirthdayUserCreate() throws Exception {
+        user.setBirthday(null);
+
+        MvcResult result = mockMvc.perform(getPostRequest(user, PATH))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andReturn();
+        ProjectException exc = getExcFromResult(result);
+        assertEquals("Дата рождения не может быть пустой", exc.getMessage());
     }
 
     @Test
@@ -185,7 +196,6 @@ class UserControllerTest extends BaseControllerTest<User> {
         MvcResult result = mockMvc.perform(getGetRequest(PATH))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-
 
         List<User> users = getListFromResult(result, User.class);
         assertEquals(1, users.size());

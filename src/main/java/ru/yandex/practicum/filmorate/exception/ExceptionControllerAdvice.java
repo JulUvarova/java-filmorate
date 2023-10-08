@@ -3,15 +3,11 @@ package ru.yandex.practicum.filmorate.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ExceptionControllerAdvice {
-    @ResponseBody
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProjectException handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -20,13 +16,20 @@ public class ExceptionControllerAdvice {
         return new ProjectException(message, ex.getCause(), HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = {ModelNotFoundException.class})
     public ProjectException handleNotFoundException(Exception ex) {
         String message = ex.getMessage();
         log.info(message);
         return new ProjectException(message, ex.getCause(), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = {Throwable.class})
+    public ProjectException handleUnhandledException(Throwable ex) {
+        String message = ex.getMessage();
+        log.info(message);
+        return new ProjectException(message, ex.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 
