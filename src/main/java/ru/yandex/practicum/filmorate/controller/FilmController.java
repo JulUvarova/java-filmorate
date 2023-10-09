@@ -6,14 +6,14 @@ import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid; // нельзя проверить через класс/метод https://habr.com/ru/companies/otus/articles/746414/
-import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController extends BaseController<Film> {
     @GetMapping
-    public ArrayList<Film> readAll() {
+    public List<Film> readAll() {
         log.info("Отправили {} фильмов из хранилища", storage.size());
         return super.readAll();
     }

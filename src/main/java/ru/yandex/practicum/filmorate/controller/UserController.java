@@ -6,15 +6,14 @@ import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
-
 public class UserController extends BaseController<User> {
     @GetMapping
-    public ArrayList<User> readAll() {
+    public List<User> readAll() {
         log.info("Отправили {} пользователей из хранилища", storage.size());
         return super.readAll();
     }

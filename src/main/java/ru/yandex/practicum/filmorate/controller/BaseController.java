@@ -4,6 +4,7 @@ import ru.yandex.practicum.filmorate.exception.ModelNotFoundException;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public abstract class BaseController<M extends BaseModel> {
     protected final Map<Integer, M> storage = new HashMap<>();
     private int idCount = 0;
 
-    public ArrayList<M> readAll() {
+    public List<M> readAll() {
         return new ArrayList<>(storage.values());
     }
 
