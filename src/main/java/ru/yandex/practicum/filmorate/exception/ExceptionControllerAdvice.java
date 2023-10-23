@@ -8,28 +8,28 @@ import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionControllerAdvice {
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ProjectException handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         log.info(message);
-        return new ProjectException(message, ex.getCause(), HttpStatus.BAD_REQUEST);
+        return new ErrorResponse(message, ex.getCause(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ModelNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(value = {ModelNotFoundException.class})
-    public ProjectException handleNotFoundException(Exception ex) {
+    public ErrorResponse handleNotFoundException(RuntimeException ex) {
         String message = ex.getMessage();
         log.info(message);
-        return new ProjectException(message, ex.getCause(), HttpStatus.NOT_FOUND);
+        return new ErrorResponse(message, ex.getCause(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = {Throwable.class})
-    public ProjectException handleUnhandledException(Throwable ex) {
+    public ErrorResponse handleUnhandledException(Throwable ex) {
         String message = ex.getMessage();
         log.info(message);
-        return new ProjectException(message, ex.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ErrorResponse(message, ex.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 

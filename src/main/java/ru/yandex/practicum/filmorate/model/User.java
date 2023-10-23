@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,4 +24,14 @@ public class User extends BaseModel {
     @NotNull(message = "Дата рождения не может быть пустой")
     @PastOrPresent(message = "Дата рождения не может быть в будущем")//мб null
     private LocalDate birthday;
+
+    private Set<Long> friends = new HashSet<>();
+
+    public void addFriend(Long user) {
+        friends.add(user);
+    }
+
+    public void deleteFriend(Long user) {
+        friends.remove(user);
+    }
 }
