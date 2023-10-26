@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.ValidateDate;
@@ -28,7 +29,8 @@ public class Film extends BaseModel {
     @Positive(message = "Продолжительность фильма не может быть отрицательной")
     private int duration;
 
-    Set<Long> likes = new HashSet<>();
+    @JsonIgnore
+    private Set<Long> likes = new HashSet<>();
 
     public void addLike(long user) {
         likes.add(user);

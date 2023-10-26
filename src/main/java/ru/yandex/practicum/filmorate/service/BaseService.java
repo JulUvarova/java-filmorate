@@ -22,20 +22,13 @@ public abstract class BaseService<M extends BaseModel> {
     }
 
     public BaseModel update(M model) {
-        findModel(model.getId());
+        getById(model.getId());
         return storage.update(model);
     }
 
-    public BaseModel getById(long id) {
-        return findModel(id);
-    }
-
-    protected M findModel(long id) {
-        M model = storage.getById(id);
-        if (model == null) {
-            throw new ModelNotFoundException(String.format("Объект с id=%d не найден", id));
-        } else {
-            return model;
-        }
+    public M getById(long id) {
+        M model = storage.getById(id).orElseThrow(
+                () -> new ModelNotFoundException(String.format("Объект с id=%d не найден", id)));
+        return model;
     }
 }

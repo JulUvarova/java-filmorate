@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.storage.memory;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.storage.BaseStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class InMemoryBaseStorage<M extends BaseModel> implements BaseStorage<M> {
     protected final Map<Long, M> storage = new HashMap<>();
@@ -36,10 +33,7 @@ public abstract class InMemoryBaseStorage<M extends BaseModel> implements BaseSt
     }
 
     @Override
-    public M getById(long id) {
-        if (!storage.containsKey(id)) {
-            return null;
-        }
-        return storage.get(id);
+    public Optional<M> getById(long id) {
+        return Optional.ofNullable(storage.get(id));
     }
 }

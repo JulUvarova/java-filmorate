@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.service.BaseService;
 import java.util.List;
 
 public abstract class BaseController<M extends BaseModel> {
-    BaseService<M> service;
+    private BaseService<M> service;
 
     public BaseController(BaseService<M> service) {
         this.service = service;

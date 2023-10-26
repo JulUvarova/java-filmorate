@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.BaseModel;
+import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BaseStorage<M extends BaseModel> {
     public List<M> getAll();
@@ -13,5 +15,5 @@ public interface BaseStorage<M extends BaseModel> {
 
     public M delete(M model);
 
-    public M getById(long id);
+    public Optional<M> getById(long id);
 }

@@ -206,7 +206,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
     }
 
     @Test
-    void getUserByFailId() throws Exception {
+    void getFilmByFailId() throws Exception {
         mockMvc.perform(getPostRequest(film, PATH));
 
         MvcResult result = mockMvc.perform(getGetRequest(PATH + "/1000"))
@@ -279,5 +279,21 @@ class FilmControllerTest extends BaseControllerTest<Film> {
 
         List<Film> films = getListFromResult(result, Film.class);
         assertEquals(1, films.get(0).getId());
+    }
+
+    @Test
+    void getMostPopularFilmsWithWrongQuery() throws Exception {
+        userStorage.create(user);
+        mockMvc.perform(getPostRequest(film, PATH));
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        mockMvc.perform(getPutRequest(null, PATH + "/1/like/1"));
+
+        MvcResult result = mockMvc.perform(getGetRequest(PATH + "/popular?count=-1"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Список не может содержать -1 объектов", exc.getMessage());
     }
 }

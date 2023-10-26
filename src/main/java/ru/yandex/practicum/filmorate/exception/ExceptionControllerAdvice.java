@@ -12,7 +12,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        log.info(message);
+        log.info("Получен статус 400: {}", ex.getMessage(), ex.getStackTrace());
         return new ErrorResponse(message, ex.getCause(), HttpStatus.BAD_REQUEST);
     }
 
@@ -20,15 +20,23 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(RuntimeException ex) {
         String message = ex.getMessage();
-        log.info(message);
+        log.info("Получен статус 404: {}", ex.getMessage(), ex.getStackTrace());
         return new ErrorResponse(message, ex.getCause(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IncorrectRequestParam.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectPathVariable(IncorrectRequestParam ex){
+        String message = ex.getMessage();
+        log.info("Получен статус 400: {}", ex.getMessage(), ex.getStackTrace());
+        return new ErrorResponse(message, ex.getCause(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnhandledException(Throwable ex) {
         String message = ex.getMessage();
-        log.info(message);
+        log.info("Получен статус 500: {}", ex.getMessage(), ex.getStackTrace());
         return new ErrorResponse(message, ex.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

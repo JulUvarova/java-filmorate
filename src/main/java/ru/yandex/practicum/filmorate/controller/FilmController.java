@@ -3,12 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.IncorrectRequestParam;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid; // нельзя проверить через класс/метод https://habr.com/ru/companies/otus/articles/746414/
-import java.util.Comparator;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +32,9 @@ public class FilmController extends BaseController<Film> {
     }
 
     @PostMapping
-    public BaseModel create(@Valid @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Создается фильм: {}", film);
-        return super.create(film);
+        return (Film) super.create(film);
     }
 
     @PutMapping
@@ -61,9 +62,12 @@ public class FilmController extends BaseController<Film> {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
-        return service.getAllFilms().stream()
-                .sorted(Comparator.comparing(Film::getRate).reversed())
+    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
+        if (count < 1) {
+            throw new IncorrectRequestParam(String.format("Список не может содержать %d объектов", count));
+        }
+        log.info("Создается список из {} лучших фильмов", count);
+        return service.getFilmsByRate().stream()
                 .limit(count)
                 .collect(Collectors.toList());
     }
