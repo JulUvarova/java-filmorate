@@ -26,7 +26,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(IncorrectRequestParam.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectPathVariable(IncorrectRequestParam ex){
+    public ErrorResponse handleIncorrectPathVariable(IncorrectRequestParam ex) {
         String message = ex.getMessage();
         log.info("Получен статус 400: {}", ex.getMessage(), ex.getStackTrace());
         return new ErrorResponse(message, ex.getCause(), HttpStatus.BAD_REQUEST);
