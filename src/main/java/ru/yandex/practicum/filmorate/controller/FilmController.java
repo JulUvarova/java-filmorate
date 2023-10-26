@@ -50,19 +50,25 @@ public class FilmController extends BaseController<Film> {
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable long id, @PathVariable long userId) {
+        if (userId < 1) {
+            throw new IncorrectRequestParam(String.format("Пользователя с id=%d не существует", userId));
+        }
         log.info("Пользователь id={} ставит лайк фильму id={}", id, userId);
         service.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable long id, @PathVariable long userId) {
+        if (userId < 1) {
+            throw new IncorrectRequestParam(String.format("Пользователя с id=%d не существует", userId));
+        }
         log.info("Пользователь id={} удаляет лайк фильму id={}", id, userId);
         service.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        if (count < 1) {
+        if (count < 0) {
             throw new IncorrectRequestParam(String.format("Список не может содержать %d объектов", count));
         }
         log.info("Создается список из {} лучших фильмов", count);
