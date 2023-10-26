@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid; // нельзя проверить через класс/метод https://habr.com/ru/companies/otus/articles/746414/
-import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
