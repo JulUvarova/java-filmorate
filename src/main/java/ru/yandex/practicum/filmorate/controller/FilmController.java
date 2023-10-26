@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectRequestParam;
+import ru.yandex.practicum.filmorate.exception.ModelNotFoundException;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -51,7 +52,7 @@ public class FilmController extends BaseController<Film> {
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable long id, @PathVariable long userId) {
         if (userId < 1) {
-            throw new IncorrectRequestParam(String.format("Пользователя с id=%d не существует", userId));
+            throw new ModelNotFoundException(String.format("Пользователя с id=%d не существует", userId));
         }
         log.info("Пользователь id={} ставит лайк фильму id={}", id, userId);
         service.addLike(id, userId);
@@ -60,7 +61,7 @@ public class FilmController extends BaseController<Film> {
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable long id, @PathVariable long userId) {
         if (userId < 1) {
-            throw new IncorrectRequestParam(String.format("Пользователя с id=%d не существует", userId));
+            throw new ModelNotFoundException(String.format("Пользователя с id=%d не существует", userId));
         }
         log.info("Пользователь id={} удаляет лайк фильму id={}", id, userId);
         service.deleteLike(id, userId);
