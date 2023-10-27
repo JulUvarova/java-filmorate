@@ -69,7 +69,7 @@ public class FilmController extends BaseController<Film> {
 
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        if (count < 0) {
+        if (count <= 0) {
             throw new IncorrectRequestParam(String.format("Список не может содержать %d объектов", count));
         }
         log.info("Создается список из {} лучших фильмов", count);
