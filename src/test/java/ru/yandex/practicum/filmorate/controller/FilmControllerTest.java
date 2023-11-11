@@ -5,27 +5,38 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.yandex.practicum.filmorate.exception.ExceptionControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.ProjectException;
+import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//разобщает тесты
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)//https://www.baeldung.com/spring-dirtiescontext
 @ActiveProfiles("test")//пометка, запуск тестов под профилем "тест"
 class FilmControllerTest extends BaseControllerTest<Film> {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private FilmController controller;
+
+    @Autowired
+    private UserStorage userStorage;
+
+    private User user = new User();
 
     private Film film = new Film();
 
@@ -33,15 +44,15 @@ class FilmControllerTest extends BaseControllerTest<Film> {
 
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(new FilmController())
-                .setControllerAdvice(new ExceptionControllerAdvice())
-                .build();
-
         film.setName("normal name");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
         film.setDescription("Normal description");
+
+        user.setName("normal name");
+        user.setBirthday(LocalDate.now());
+        user.setLogin("normal_login");
+        user.setEmail("Normal@email.ru");
     }
 
     @Test
@@ -63,7 +74,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Название не может быть пустым", exc.getMessage());
     }
 
@@ -74,7 +85,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Название не может быть пустым", exc.getMessage());
     }
 
@@ -88,7 +99,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Описание не более 200 знаков", exc.getMessage());
     }
 
@@ -99,7 +110,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Описание не может быть пустым", exc.getMessage());
     }
 
@@ -110,7 +121,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Фильм не может быть снят ранее 28.12.1895", exc.getMessage());
     }
 
@@ -121,7 +132,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Фильм не может быть снят ранее 28.12.1895", exc.getMessage());
     }
 
@@ -132,7 +143,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPostRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
+        ErrorResponse exc = getExcFromResult(result);
         assertEquals("Продолжительность фильма не может быть отрицательной", exc.getMessage());
     }
 
@@ -164,8 +175,8 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         MvcResult result = mockMvc.perform(getPutRequest(film, PATH))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andReturn();
-        ProjectException exc = getExcFromResult(result);
-        assertEquals("Данные с id=1000 не найдены", exc.getMessage());
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Объект с id=1000 не найден", exc.getMessage());
     }
 
     @Test
@@ -176,8 +187,113 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-
         List<Film> films = getListFromResult(result, Film.class);
         assertEquals(1, films.size());
+    }
+
+    @Test
+    void getFilmById() throws Exception {
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        MvcResult result = mockMvc.perform(getGetRequest(PATH + "/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Film actualFilm = getModelFromResult(result, Film.class);
+        film.setId(1);
+
+        assertEquals(film, actualFilm);
+    }
+
+    @Test
+    void getFilmByFailId() throws Exception {
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        MvcResult result = mockMvc.perform(getGetRequest(PATH + "/1000"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Объект с id=1000 не найден", exc.getMessage());
+    }
+
+    @Test
+    void addLikeToFilm() throws Exception {
+        userStorage.create(user);
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        mockMvc.perform(getPutRequest(null, PATH + "/1/like/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Film actualFilm = (Film) controller.getById(1);
+        assertEquals(1, actualFilm.getRate());
+    }
+
+    @Test
+    void addLikeToWrongFilm() throws Exception {
+        MvcResult result = mockMvc.perform(getPutRequest(null, PATH + "/100/like/100"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Объект с id=100 не найден", exc.getMessage());
+    }
+
+    @Test
+    void deleteLikeToFilm() throws Exception {
+        userStorage.create(user);
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        mockMvc.perform(getPutRequest(null, PATH + "/1/like/1"));
+
+        mockMvc.perform(getDeleteRequest(PATH + "/1/like/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Film actualFilm = (Film) controller.getById(1);
+        assertEquals(0, actualFilm.getRate());
+    }
+
+    @Test
+    void deleteLikeToWrongFilm() throws Exception {
+        MvcResult result = mockMvc.perform(getDeleteRequest(PATH + "/100/like/100"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn();
+
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Объект с id=100 не найден", exc.getMessage());
+    }
+
+    @Test
+    void getMostPopularFilms() throws Exception {
+        userStorage.create(user);
+        mockMvc.perform(getPostRequest(film, PATH));
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        mockMvc.perform(getPutRequest(null, PATH + "/1/like/1"));
+
+        MvcResult result = mockMvc.perform(getGetRequest(PATH + "/popular?count=1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        List<Film> films = getListFromResult(result, Film.class);
+        assertEquals(1, films.get(0).getId());
+    }
+
+    @Test
+    void getMostPopularFilmsWithWrongQuery() throws Exception {
+        userStorage.create(user);
+        mockMvc.perform(getPostRequest(film, PATH));
+        mockMvc.perform(getPostRequest(film, PATH));
+
+        mockMvc.perform(getPutRequest(null, PATH + "/1/like/1"));
+
+        MvcResult result = mockMvc.perform(getGetRequest(PATH + "/popular?count=-1"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        ErrorResponse exc = getExcFromResult(result);
+        assertEquals("Список не может содержать -1 объектов", exc.getMessage());
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.yandex.practicum.filmorate.exception.ProjectException;
+import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.BaseModel;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class BaseControllerTest<M extends BaseModel> {
     @Autowired
-    private ObjectMapper objectMapper = new ObjectMapper(); //преобразовывает объект в JSON-строку
+    private ObjectMapper objectMapper; //преобразовывает объект в JSON-строку
 
     protected M getModelFromResult(MvcResult result, Class<M> type) throws Exception {
         M model = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), type);
@@ -28,9 +28,16 @@ public abstract class BaseControllerTest<M extends BaseModel> {
         return filmList;
     }
 
-    protected ProjectException getExcFromResult(MvcResult result) throws Exception {
-        ProjectException exc = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
-                ProjectException.class);
+    protected List<Long> getLongListFromResult(MvcResult result) throws Exception {
+        String list = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        List<Long> filmList = objectMapper.readValue(
+                list, objectMapper.getTypeFactory().constructCollectionType(List.class, Long.class));
+        return filmList;
+    }
+
+    protected ErrorResponse getExcFromResult(MvcResult result) throws Exception {
+        ErrorResponse exc = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                ErrorResponse.class);
         return exc;
     }
 
@@ -53,6 +60,12 @@ public abstract class BaseControllerTest<M extends BaseModel> {
     protected RequestBuilder getGetRequest(String path) {
         return MockMvcRequestBuilders
                 .get(path)
+                .accept(MediaType.APPLICATION_JSON);
+    }
+
+    protected RequestBuilder getDeleteRequest(String path) {
+        return MockMvcRequestBuilders
+                .delete(path)
                 .accept(MediaType.APPLICATION_JSON);
     }
 }
