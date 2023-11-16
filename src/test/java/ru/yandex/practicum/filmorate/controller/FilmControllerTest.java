@@ -13,19 +13,21 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//разобщает тесты
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)//https://www.baeldung.com/spring-dirtiescontext
-@ActiveProfiles("test")//пометка, запуск тестов под профилем "тест"
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 class FilmControllerTest extends BaseControllerTest<Film> {
     @Autowired
     private MockMvc mockMvc;
@@ -48,6 +50,9 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
         film.setDescription("Normal description");
+        film.setMpa(new Mpa(1, "G"));
+        film.setRate(5);
+        film.setGenres(new ArrayList<>());
 
         user.setName("normal name");
         user.setBirthday(LocalDate.now());
@@ -157,6 +162,9 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         updateFilm.setReleaseDate(LocalDate.now());
         updateFilm.setDescription("up");
         updateFilm.setDuration(10);
+        updateFilm.setMpa(new Mpa(1, "G"));
+        updateFilm.setRate(5);
+        updateFilm.setGenres(new ArrayList<>());
 
         MvcResult result2 = mockMvc.perform(getPutRequest(updateFilm, PATH))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -227,7 +235,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(1, actualFilm.getRate());
+        assertEquals(6, actualFilm.getRate());
     }
 
     @Test
@@ -252,7 +260,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(0, actualFilm.getRate());
+        assertEquals(4, actualFilm.getRate());
     }
 
     @Test

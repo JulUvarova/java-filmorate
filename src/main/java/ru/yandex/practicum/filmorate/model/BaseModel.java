@@ -7,4 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class BaseModel {
     private long id;
+
+    public BaseModel(long id) {
+        this.id = id;
+    }
 }

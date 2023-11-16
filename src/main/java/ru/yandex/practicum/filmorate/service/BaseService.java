@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.storage.BaseStorage;
 import java.util.List;
 
 public abstract class BaseService<M extends BaseModel> {
-    BaseStorage<M> storage;
+    protected BaseStorage<M> storage;
 
     public BaseService(BaseStorage<M> storage) {
         this.storage = storage;

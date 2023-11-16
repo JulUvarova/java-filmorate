@@ -9,25 +9,29 @@ import java.util.List;
 
 @Service
 public class FilmService extends BaseService<Film> {
-    private FilmStorage storage;
+    private final FilmStorage storage;
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage storage) {
+    public FilmService(FilmStorage storage, UserService userService) {
         super(storage);
         this.storage = storage;
+        this.userService = userService;
     }
 
     public void addLike(long filmId, long userId) {
-        Film film = getById(filmId);
-        film.addLike(userId);
+        getById(filmId);
+        userService.getById(userId);
+        storage.addLike(filmId, userId);
     }
 
     public void deleteLike(long filmId, long userId) {
-        Film film = getById(filmId);
-        film.deleteLike(userId);
+        getById(filmId);
+        userService.getById(userId);
+        storage.deleteLike(filmId, userId);
     }
 
-    public List<Film> getFilmsByRate() {
-        return storage.getFilmsByRate();
+    public List<Film> getFilmsByRate(int limit) {
+        return storage.getFilmsByRate(limit);
     }
 }

@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +27,16 @@ public class User extends BaseModel {
     private LocalDate birthday;
 
     @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
+    private List<Long> friends = new ArrayList<>();
+
+    public User(long id, String name, String login, String email, LocalDate birthday, List<Long> friends) {
+        super(id);
+        this.name = name;
+        this.login = login;
+        this.email = email;
+        this.birthday = birthday;
+        this.friends = friends;
+    }
 
     public void addFriend(Long user) {
         friends.add(user);
