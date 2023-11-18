@@ -231,6 +231,8 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void addAndGetFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -246,6 +248,8 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void deleteAndGetEmptyFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -265,7 +269,11 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void getCommonFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("third@email.ru");
+        user.setLogin("third");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -284,7 +292,11 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void getEmptyCommonFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("third@email.ru");
+        user.setLogin("third");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/3"))

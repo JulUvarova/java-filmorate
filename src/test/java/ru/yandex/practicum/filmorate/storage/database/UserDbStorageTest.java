@@ -35,6 +35,8 @@ class UserDbStorageTest {
     @Test
     void getAll() {
         userStorage.create(user);
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         userStorage.create(user);
 
         List<User> users = userStorage.getAll();
@@ -86,21 +88,23 @@ class UserDbStorageTest {
     @Test
     void addAndDeleteFriendAndGetAllFriends() {
         userStorage.create(user);
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         userStorage.create(user);
 
         userStorage.addFriend(1L, 2L);
 
-        List<Long> allFriend = userStorage.getAllFriend(1L);
+        List<User> allFriend = userStorage.getAllFriend(1L);
         assertThat(allFriend.size())
                 .isNotNull()
                 .isEqualTo(1);
 
-        assertThat(allFriend.get(0))
+        assertThat(allFriend.get(0).getId())
                 .isNotNull()
                 .isEqualTo(2);
 
         userStorage.deleteFriend(1, 2);
-        List<Long> friendAfterDelete = userStorage.getAllFriend(1L);
+        List<User> friendAfterDelete = userStorage.getAllFriend(1L);
         assertThat(friendAfterDelete.size())
                 .isEqualTo(0);
     }

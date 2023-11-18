@@ -17,11 +17,11 @@ public abstract class BaseService<M extends BaseModel> {
         return storage.getAll();
     }
 
-    public BaseModel create(M model) {
+    public M create(M model) {
         return storage.create(model);
     }
 
-    public BaseModel update(M model) {
+    public M update(M model) {
         getById(model.getId());
         return storage.update(model);
     }

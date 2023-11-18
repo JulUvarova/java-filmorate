@@ -26,23 +26,11 @@ public class User extends BaseModel {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")//мб null
     private LocalDate birthday;
 
-    @JsonIgnore
-    private List<Long> friends = new ArrayList<>();
-
-    public User(long id, String name, String login, String email, LocalDate birthday, List<Long> friends) {
+    public User(long id, String name, String login, String email, LocalDate birthday) {
         super(id);
         this.name = name;
         this.login = login;
         this.email = email;
         this.birthday = birthday;
-        this.friends = friends;
-    }
-
-    public void addFriend(Long user) {
-        friends.add(user);
-    }
-
-    public void deleteFriend(Long user) {
-        friends.remove(user);
     }
 }

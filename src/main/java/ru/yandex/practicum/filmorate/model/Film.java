@@ -9,8 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -28,32 +27,22 @@ public class Film extends BaseModel {
     @Positive(message = "Продолжительность фильма не может быть отрицательной")
     private int duration;
 
-    private List<Long> likes = new ArrayList<>();
-
-    private long rate;
-
+    @NotNull
     private Mpa mpa;
 
-    private List<Genre> genres = new ArrayList<>();
+    private Set<Genre> genres = new HashSet<>();
 
     public Film(long id, String name, String description, LocalDate releaseDate, int duration,
-                List<Long> likes, Mpa mpa, List<Genre> genres, long rate) {
+                Mpa mpa) {
         super(id);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.likes = likes;
         this.mpa = mpa;
-        this.genres = genres;
-        this.rate = rate;
     }
 
-    public void addLike(long user) {
-        rate++;
-    }
-
-    public void deleteLike(long user) {
-        rate--;
+    public void addGenre(Genre genre) {
+        genres.add(genre);
     }
 }

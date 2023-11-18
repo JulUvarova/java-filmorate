@@ -36,12 +36,12 @@ public class MpaDbStorage implements BaseStorage<Mpa> {
     }
 
     @Override
-    public BaseModel create(Mpa model) {
+    public Mpa create(Mpa model) {
         throw new UnsupportedOperationException("Функция пока не реализована");
     }
 
     @Override
-    public BaseModel update(Mpa model) {
+    public Mpa update(Mpa model) {
         throw new UnsupportedOperationException("Функция пока не реализована");
     }
 

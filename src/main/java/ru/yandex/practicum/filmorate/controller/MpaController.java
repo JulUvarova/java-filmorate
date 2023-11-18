@@ -30,7 +30,7 @@ public class MpaController {
     }
 
     @GetMapping("/{id}")
-    public BaseModel getById(@PathVariable long id) {
+    public Mpa getById(@PathVariable long id) {
         log.info("Получаем MPA с id={}", id);
         return service.getById(id);
     }

@@ -6,11 +6,10 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService extends BaseService<User> {
-    UserStorage storage;
+    private UserStorage storage;
 
     @Autowired
     public UserService(UserStorage storage) {
@@ -32,17 +31,10 @@ public class UserService extends BaseService<User> {
 
     public List<User> getAllFriend(long id) {
         getById(id);
-        return storage.getAllFriend(id).stream()
-                .map(x -> getById(x))
-                .collect(Collectors.toList());
+        return storage.getAllFriend(id);
     }
 
     public List<User> getCommonFriend(long user1, long user2) {
-        getById(user1);
-        getById(user2);
-        List<Long> user1Friends = storage.getAllFriend(user1);
-        List<Long> user2Friends = storage.getAllFriend(user2);
-        user1Friends.retainAll(user2Friends);
-        return user1Friends.stream().map(x -> getById(x)).collect(Collectors.toList());
+        return storage.getCommonFriend(user1, user2);
     }
 }

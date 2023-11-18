@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface BaseStorage<M extends BaseModel> {
     public List<M> getAll();
 
-    public BaseModel create(M model);
+    public M create(M model);
 
-    public BaseModel update(M model);
+    public M update(M model);
 
     public M delete(M model);
 

@@ -19,7 +19,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,8 +52,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         film.setDuration(120);
         film.setDescription("Normal description");
         film.setMpa(new Mpa(1, "G"));
-        film.setRate(5);
-        film.setGenres(new ArrayList<>());
 
         user.setName("normal name");
         user.setBirthday(LocalDate.now());
@@ -165,8 +162,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         updateFilm.setDescription("up");
         updateFilm.setDuration(10);
         updateFilm.setMpa(new Mpa(1, "G"));
-        updateFilm.setRate(5);
-        updateFilm.setGenres(new ArrayList<>());
 
         MvcResult result2 = mockMvc.perform(getPutRequest(updateFilm, PATH))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -237,7 +232,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(6, actualFilm.getRate());
     }
 
     @Test
@@ -262,7 +256,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(5, actualFilm.getRate());
     }
 
     @Test

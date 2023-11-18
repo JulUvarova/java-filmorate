@@ -69,9 +69,10 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<Long> getAllFriend(long id) {
-        String sql = "select friend_id from friendship where user_id = ?";
-        List<Long> friends = jdbcTemplate.queryForList(sql, Long.class, id);
+    public List<User> getAllFriend(long id) {
+        String sql = "select * from users where id in (" +
+                "select friend_id from friendship where user_id = ?)";
+        List<User> friends = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id);
         return friends;
     }
 
@@ -87,14 +88,22 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sql, user, friend);
     }
 
+    @Override
+    public List<User> getCommonFriend(long user1, long user2) {
+        String sql = "select * from users where id in (" +
+                "select friend_id from friendship where user_id = ? and friend_id in (" +
+                "select friend_id from friendship where user_id = ?))";
+        List<User> friends = jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), user1, user2);
+        return friends;
+    }
+
     private User makeUser(ResultSet rs) throws SQLException {
         long id = rs.getLong("id");
         String name = rs.getString("username");
         String login = rs.getString("login");
         String email = rs.getString("email");
         LocalDate birthday = rs.getDate("birthday").toLocalDate();
-        List<Long> friends = getAllFriend(id);
 
-        return new User(id, name, login, email, birthday, friends);
+        return new User(id, name, login, email, birthday);
     }
 }

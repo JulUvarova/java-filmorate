@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,16 +31,12 @@ class FilmDbStorageTest {
         film.setDuration(120);
         film.setDescription("Normal description");
         film.setMpa(new Mpa(1, "G"));
-        film.setRate(5);
-        film.setGenres(new ArrayList<>());
 
         film2.setName("normal name");
         film2.setReleaseDate(LocalDate.now());
         film2.setDuration(120);
         film2.setDescription("Normal description");
         film2.setMpa(new Mpa(1, "G"));
-        film2.setRate(10);
-        film2.setGenres(new ArrayList<>());
 
         filmStorage = new FilmDbStorage(jdbcTemplate);
     }
@@ -99,17 +94,16 @@ class FilmDbStorageTest {
         filmStorage.create(film);
         filmStorage.create(film2);
 
-        film2.setRate(100);
         filmStorage.create(film2);
 
-        List<Film> filmsByRate = filmStorage.getFilmsByRate(1);
+        List<Film> filmsByRate = filmStorage.getFilmsByRate(2);
         assertThat(filmsByRate.size())
                 .isNotNull()
-                .isEqualTo(1);
-
-        assertThat(filmsByRate.get(0).getId())
-                .isNotNull()
-                .isEqualTo(3);
+                .isEqualTo(2);
+//
+//        assertThat(filmsByRate.get(0).getId())
+//                .isNotNull()
+//                .isEqualTo(3);
     }
 
     @Test
@@ -118,19 +112,23 @@ class FilmDbStorageTest {
         jdbcTemplate.update(sql, "name", "login", "12@mail.ru", "2020-12-12");
 
         filmStorage.create(film);
+        filmStorage.create(film);
 
         filmStorage.addLike(1, 1);
-        Film likedFilm = filmStorage.getById(1).get();
 
-        assertThat(likedFilm.getRate())
+        List<Film> mostPopFilm = filmStorage.getFilmsByRate(1);
+
+        assertThat(mostPopFilm.get(0).getId())
                 .isNotNull()
-                .isEqualTo(6);
+                .isEqualTo(1);
+
+        filmStorage.addLike(2, 1);
 
         filmStorage.deleteLike(1, 1);
-        Film dislikedFilm = filmStorage.getById(1).get();
+        List<Film> mostPopFilmAfterUnlike = filmStorage.getFilmsByRate(1);
 
-        assertThat(dislikedFilm.getRate())
+        assertThat(mostPopFilmAfterUnlike.get(0).getId())
                 .isNotNull()
-                .isEqualTo(5);
+                .isEqualTo(2);
     }
 }

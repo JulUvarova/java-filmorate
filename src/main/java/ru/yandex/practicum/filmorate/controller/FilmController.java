@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectRequestParam;
 import ru.yandex.practicum.filmorate.exception.ModelNotFoundException;
-import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -32,17 +31,17 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Создается фильм: {}", film);
-        return (Film) service.create(film);
+        return service.create(film);
     }
 
     @PutMapping
-    public BaseModel update(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Фильм с id={} обновляется", film.getId());
         return service.update(film);
     }
 
     @GetMapping("/{id}")
-    public BaseModel getById(@PathVariable long id) {
+    public Film getById(@PathVariable long id) {
         log.info("Получаем фильм с id={}", id);
         return service.getById(id);
     }

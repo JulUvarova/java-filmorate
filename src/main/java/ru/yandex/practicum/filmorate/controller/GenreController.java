@@ -31,7 +31,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public BaseModel getById(@PathVariable long id) {
+    public Genre getById(@PathVariable long id) {
         Genre genre = service.getById(id);
         log.info("Получаем жанр с id={}: ", id, genre.getName());
         return genre;
