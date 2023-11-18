@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.database.GenreDbStorage;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -52,7 +51,6 @@ public class FilmService extends BaseService<Film> {
     public Film create(Film model) {
         Film film = super.create(model);
         genreStorage.createGenreToFilm(film);
-//        film.setGenres(new HashSet<>());
         genreStorage.loadGenreToFilm(List.of(film));
         return film;
     }

@@ -10,5 +10,6 @@ public interface UserStorage extends BaseStorage<User> {
     public void addFriend(long user, long friend);
 
     public void deleteFriend(long user, long friend);
+
     public List<User> getCommonFriend(long user1, long user2);
 }
