@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ModelNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.storage.database.GenreDbStorage;
 
 import java.util.List;
 
@@ -14,10 +14,10 @@ import java.util.List;
 public class FilmService extends BaseService<Film> {
     private final FilmStorage storage;
     private final UserStorage userStorage;
-    private final GenreDbStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserStorage userStorage, GenreDbStorage genreStorage) {
+    public FilmService(FilmStorage storage, UserStorage userStorage, GenreStorage genreStorage) {
         super(storage);
         this.storage = storage;
         this.userStorage = userStorage;
@@ -37,7 +37,9 @@ public class FilmService extends BaseService<Film> {
     }
 
     public List<Film> getFilmsByRate(int limit) {
-        return storage.getFilmsByRate(limit);
+        List<Film> films = storage.getFilmsByRate(limit);
+        genreStorage.loadGenreToFilm(films);
+        return films;
     }
 
     @Override

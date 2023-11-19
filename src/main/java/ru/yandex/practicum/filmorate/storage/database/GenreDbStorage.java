@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.BaseStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,13 +16,14 @@ import java.util.stream.Collectors;
 import static java.util.function.Function.identity;
 
 @Component
-public class GenreDbStorage implements BaseStorage<Genre> {
+public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public void loadGenreToFilm(List<Film> films) {
         final Map<Long, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
 
@@ -37,6 +38,7 @@ public class GenreDbStorage implements BaseStorage<Genre> {
         }, films.stream().map(Film::getId).toArray());
     }
 
+    @Override
     public void createGenreToFilm(Film film) {
         if (film.getGenres().isEmpty()) {
             return;
@@ -56,6 +58,7 @@ public class GenreDbStorage implements BaseStorage<Genre> {
                 });
     }
 
+    @Override
     public void deleteGenreToFilm(Film film) {
         String sqlToDel = "delete from film_genre where film_id = ?";
         jdbcTemplate.update(sqlToDel, film.getId());
