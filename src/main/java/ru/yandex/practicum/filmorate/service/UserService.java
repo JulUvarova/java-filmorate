@@ -5,40 +5,36 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService extends BaseService<User> {
+    private UserStorage storage;
+
     @Autowired
     public UserService(UserStorage storage) {
         super(storage);
+        this.storage = storage;
     }
 
     public void addFriend(long user, long friend) {
-        User checkUser = getById(user);
-        User checkFriend = getById(friend);
-        checkUser.addFriend(friend);
-        checkFriend.addFriend(user);
+        getById(user);
+        getById(friend);
+        storage.addFriend(user, friend);
     }
 
     public void deleteFriend(long user, long friend) {
-        User checkUser = getById(user);
-        User checkFriend = getById(friend);
-        checkUser.deleteFriend(friend);
-        checkFriend.deleteFriend(user);
+        getById(user);
+        getById(friend);
+        storage.deleteFriend(user, friend);
     }
 
     public List<User> getAllFriend(long id) {
-        List<Long> friendship =  new ArrayList<>(getById(id).getFriends());
-        return friendship.stream().map(x -> storage.getById(x).get()).collect(Collectors.toList());
+        getById(id);
+        return storage.getAllFriend(id);
     }
 
     public List<User> getCommonFriend(long user1, long user2) {
-        List<Long> user1Friends = new ArrayList<>(getById(user1).getFriends());
-        List<Long> user2Friends = new ArrayList<>(getById(user2).getFriends());
-        user1Friends.retainAll(user2Friends);
-        return user1Friends.stream().map(x -> storage.getById(x).get()).collect(Collectors.toList());
+        return storage.getCommonFriend(user1, user2);
     }
 }

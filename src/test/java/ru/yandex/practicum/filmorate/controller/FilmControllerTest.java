@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -23,9 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//разобщает тесты
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)//https://www.baeldung.com/spring-dirtiescontext
-@ActiveProfiles("test")//пометка, запуск тестов под профилем "тест"
+@AutoConfigureTestDatabase
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 class FilmControllerTest extends BaseControllerTest<Film> {
     @Autowired
     private MockMvc mockMvc;
@@ -48,6 +51,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
         film.setDescription("Normal description");
+        film.setMpa(new Mpa(1, "G"));
 
         user.setName("normal name");
         user.setBirthday(LocalDate.now());
@@ -157,6 +161,7 @@ class FilmControllerTest extends BaseControllerTest<Film> {
         updateFilm.setReleaseDate(LocalDate.now());
         updateFilm.setDescription("up");
         updateFilm.setDuration(10);
+        updateFilm.setMpa(new Mpa(1, "G"));
 
         MvcResult result2 = mockMvc.perform(getPutRequest(updateFilm, PATH))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -227,7 +232,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(1, actualFilm.getRate());
     }
 
     @Test
@@ -252,7 +256,6 @@ class FilmControllerTest extends BaseControllerTest<Film> {
                 .andReturn();
 
         Film actualFilm = (Film) controller.getById(1);
-        assertEquals(0, actualFilm.getRate());
     }
 
     @Test

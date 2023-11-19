@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -13,39 +12,38 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController extends BaseController<User> {
+public class UserController {
     private final UserService service;
 
     @Autowired
     public UserController(UserService service) {
-        super(service);
         this.service = service;
     }
 
     @GetMapping
     public List<User> readAll() {
         log.info("Отправляем пользователей из хранилища");
-        return super.readAll();
+        return service.readAll();
     }
 
     @PostMapping
-    public BaseModel create(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         validateUserName(user);
         log.info("Создаем пользователя: {}", user);
-        return super.create(user);
+        return service.create(user);
     }
 
     @PutMapping
-    public BaseModel update(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         validateUserName(user);
         log.info("Пользователь с id={} обновляется", user.getId());
-        return super.update(user);
+        return service.update(user);
     }
 
     @GetMapping("/{id}")
-    public BaseModel getById(@PathVariable String id) {
+    public User getById(@PathVariable long id) {
         log.info("Получаем пользователя с id={}", id);
-        return super.getById(Long.parseLong(id));
+        return service.getById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

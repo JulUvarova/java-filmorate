@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
@@ -229,6 +231,8 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void addAndGetFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -244,6 +248,8 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void deleteAndGetEmptyFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -263,7 +269,11 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void getCommonFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("third@email.ru");
+        user.setLogin("third");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/2"));
@@ -282,7 +292,11 @@ class UserControllerTest extends BaseControllerTest<User> {
     @Test
     void getEmptyCommonFriends() throws Exception {
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("second@email.ru");
+        user.setLogin("second");
         mockMvc.perform(getPostRequest(user, PATH));
+        user.setEmail("third@email.ru");
+        user.setLogin("third");
         mockMvc.perform(getPostRequest(user, PATH));
 
         mockMvc.perform(getPutRequest(null, PATH + "/1/friends/3"))

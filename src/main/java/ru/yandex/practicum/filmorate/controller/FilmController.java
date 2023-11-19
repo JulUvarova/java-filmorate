@@ -5,48 +5,45 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.IncorrectRequestParam;
 import ru.yandex.practicum.filmorate.exception.ModelNotFoundException;
-import ru.yandex.practicum.filmorate.model.BaseModel;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.validation.Valid; // нельзя проверить через класс/метод https://habr.com/ru/companies/otus/articles/746414/
+import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController extends BaseController<Film> {
+public class FilmController {
     private final FilmService service;
 
     @Autowired
     public FilmController(FilmService service) {
-        super(service);
         this.service = service;
     }
 
     @GetMapping
     public List<Film> readAll() {
         log.info("Отправляем фильмы из хранилища");
-        return super.readAll();
+        return service.readAll();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("Создается фильм: {}", film);
-        return (Film) super.create(film);
+        return service.create(film);
     }
 
     @PutMapping
-    public BaseModel update(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Фильм с id={} обновляется", film.getId());
-        return super.update(film);
+        return service.update(film);
     }
 
     @GetMapping("/{id}")
-    public BaseModel getById(@PathVariable long id) {
+    public Film getById(@PathVariable long id) {
         log.info("Получаем фильм с id={}", id);
-        return super.getById(id);
+        return service.getById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
@@ -73,8 +70,6 @@ public class FilmController extends BaseController<Film> {
             throw new IncorrectRequestParam(String.format("Список не может содержать %d объектов", count));
         }
         log.info("Создается список из {} лучших фильмов", count);
-        return service.getFilmsByRate().stream()
-                .limit(count)
-                .collect(Collectors.toList());
+        return service.getFilmsByRate(count);
     }
 }
