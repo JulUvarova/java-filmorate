@@ -14,7 +14,7 @@
 - [Особенности](#-особенности)
 
 ## ⚙️ Технологии
-- Java 11
+- Java
 - Spring Boot
 - H2 Database
 - Maven
